@@ -1,4 +1,4 @@
-![version 0.0.2](https://img.shields.io/badge/version-0.0.1-red)
+![version 0.0.3](https://img.shields.io/badge/version-0.0.3-red)
 
 # Webby
 Webby is a simple Rust web server that supports HTTP 1.1.
