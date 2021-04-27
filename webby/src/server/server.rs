@@ -5,8 +5,8 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn new(address: &str) -> Server {
-        Server {
+    pub fn new(address: &str) -> Self {
+        Self {
             address: address.to_owned()
         }
     }
