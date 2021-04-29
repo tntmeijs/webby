@@ -19,7 +19,7 @@ impl Server {
         }
     }
 
-    pub fn start_listening(&self) {
+    pub fn start_listening(self) -> Self {
         match TcpListener::bind(&self.address) {
             Ok(listener) => {
                 for stream in listener.incoming() {
@@ -31,6 +31,8 @@ impl Server {
             }
             Err(error) => println!("ERROR: {}", error.to_string()),
         }
+
+        self
     }
 
     fn handle_connection(&self, stream: &mut TcpStream) {
