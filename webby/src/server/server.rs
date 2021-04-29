@@ -1,5 +1,10 @@
 use std::{io::{Read, Write}, net::{TcpListener, TcpStream}};
 
+use crate::{
+    utility::http_headers,
+    response::http_response::HttpResponse
+};
+
 pub struct Server {
     address: String
 }
@@ -33,9 +38,13 @@ impl Server {
 
         println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
 
-        // TODO: move this into its own class
-        let response = "HTTP/1.1 200 OK\r\n\r\n";
-        if stream.write(response.as_bytes()).is_err() {
+        // For the time being, always return HTTP status 200
+        let response = HttpResponse::new()
+            .ok()
+            .add_header(http_headers::CONTENT_TYPE, "text/plain")
+            .body("Hello, client! <3");
+
+        if stream.write(response.to_string().as_bytes()).is_err() {
             return println!("Unable to write response to TCP stream");
         }
 
