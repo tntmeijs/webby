@@ -1,15 +1,21 @@
-use std::{io::{Read, Write}, net::{TcpListener, TcpStream}};
+use std::{
+    io::{Read, Write},
+    net::{TcpListener, TcpStream},
+};
 
-use crate::{response::http_response::HttpResponse, utility::{http_headers, mime_types}};
+use crate::{
+    response::http_response::HttpResponse,
+    utility::{http_headers, mime_types},
+};
 
 pub struct Server {
-    address: String
+    address: String,
 }
 
 impl Server {
     pub fn new(address: &str) -> Self {
         Self {
-            address: address.to_owned()
+            address: address.to_owned(),
         }
     }
 
@@ -19,11 +25,11 @@ impl Server {
                 for stream in listener.incoming() {
                     match stream {
                         Ok(mut stream) => self.handle_connection(&mut stream),
-                        Err(error) => println!("ERROR: {}", error.to_string())
+                        Err(error) => println!("ERROR: {}", error.to_string()),
                     }
                 }
-            },
-            Err(error) => println!("ERROR: {}", error.to_string())
+            }
+            Err(error) => println!("ERROR: {}", error.to_string()),
         }
     }
 
