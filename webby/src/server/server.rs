@@ -1,9 +1,6 @@
 use std::{io::{Read, Write}, net::{TcpListener, TcpStream}};
 
-use crate::{
-    utility::http_headers,
-    response::http_response::HttpResponse
-};
+use crate::{response::http_response::HttpResponse, utility::{http_headers, mime_types}};
 
 pub struct Server {
     address: String
@@ -41,7 +38,7 @@ impl Server {
         // For the time being, always return HTTP status 200
         let response = HttpResponse::new()
             .ok()
-            .add_header(http_headers::CONTENT_TYPE, "text/plain")
+            .add_header(http_headers::CONTENT_TYPE, mime_types::TXT)
             .body("Hello, client! <3");
 
         if stream.write(response.to_string().as_bytes()).is_err() {
