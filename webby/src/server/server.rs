@@ -3,10 +3,7 @@ use std::{
     net::{TcpListener, TcpStream},
 };
 
-use crate::{
-    response::http_response::HttpResponse,
-    utility::{http_headers, mime_types},
-};
+use crate::{request::http_method, response::http_response::HttpResponse, utility::{http_headers, mime_types}};
 
 pub struct Server {
     address: String,
@@ -32,6 +29,11 @@ impl Server {
             Err(error) => println!("ERROR: {}", error.to_string()),
         }
 
+        self
+    }
+
+    pub fn add_route(mut self, method: http_method::HttpMethod, pattern: &str, controller: impl Fn()) -> Self {
+        // @TODO: Add routing logic
         self
     }
 
