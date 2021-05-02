@@ -1,8 +1,12 @@
 [package]
 name = "webby"
-version = "0.1.0"
+description = "A very simple HTTP 1.1 web server"
+version = "0.0.6"
+repository = "https://github.com/tntmeijs/webby"
 authors = ["Tahar <tntmeijs@gmail.com>"]
+keywords = ["web server", "server", "website", "webdev", "educational"]
 edition = "2018"
+license-file = "./../LICENSE.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
