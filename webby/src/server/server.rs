@@ -4,7 +4,7 @@ use std::{
     net::{TcpListener, TcpStream},
 };
 
-use log::{debug, error, info};
+use log::{debug, error, info, trace};
 
 use crate::{request::http_method::HttpMethod, response::http_response::HttpResponse};
 
@@ -29,6 +29,7 @@ impl Server {
     }
 
     pub fn start_listening(self) -> Self {
+        trace!("About to start listening on {}", self.address);
         match TcpListener::bind(&self.address) {
             Ok(listener) => {
                 for stream in listener.incoming() {
@@ -46,7 +47,7 @@ impl Server {
     }
 
     pub fn add_route(mut self, method: HttpMethod, pattern: &str, route_func: RouteFunc) -> Self {
-        debug!("Adding pattern \"{}\"", pattern);
+        trace!("Adding pattern \"{}\"", pattern);
 
         if self.routing_patterns.contains_key(pattern) {
             debug!(
@@ -75,11 +76,13 @@ impl Server {
         let route_to_execute = self.parse_request(&buffer);
 
         if route_to_execute.is_none() {
+            trace!("Did not find a matching route to execute");
             self.write_response(
                 stream,
                 HttpResponse::new().not_found().to_string().as_bytes(),
             );
         } else {
+            trace!("Executing matching route now");
             let response = route_to_execute.unwrap();
             self.write_response(stream, response.to_string().as_bytes());
         }
