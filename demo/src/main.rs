@@ -9,11 +9,6 @@ fn test() -> HttpResponse {
 
 fn main() {
     dotenv::from_filename(format!("{}/.env", module_path!())).ok();
-
-    for (a, b) in std::env::vars() {
-        println!("{}, {}", a, b);
-    }
-
     env_logger::init();
 
     webby::create("127.0.0.1", 8080)
