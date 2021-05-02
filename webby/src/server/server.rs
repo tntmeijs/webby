@@ -1,19 +1,32 @@
-use std::{collections::HashMap, io::{Read, Write}, net::{TcpListener, TcpStream}};
+use std::{
+    collections::HashMap,
+    io::{Read, Write},
+    net::{TcpListener, TcpStream},
+};
 
-use crate::{request::http_method, response::http_response::HttpResponse, utility::{http_headers, mime_types}};
+use crate::{
+    request::http_method::HttpMethod,
+    response::http_response::HttpResponse,
+    utility::{http_headers, mime_types},
+};
 
 pub type RouteFunc = fn() -> HttpResponse;
 
+struct RouteInfo {
+    method: HttpMethod,
+    callback: RouteFunc,
+}
+
 pub struct Server {
     address: String,
-    routing_patterns: HashMap<String, RouteFunc>
+    routing_patterns: HashMap<String, RouteInfo>,
 }
 
 impl Server {
     pub fn new(address: &str) -> Self {
         Self {
             address: address.to_owned(),
-            routing_patterns: HashMap::new()
+            routing_patterns: HashMap::new(),
         }
     }
 
@@ -33,8 +46,24 @@ impl Server {
         self
     }
 
-    pub fn add_route(mut self, method: http_method::HttpMethod, pattern: &str, routeFunc: RouteFunc) -> Self {
-        // @TODO: Add routing logic
+    pub fn add_route(mut self, method: HttpMethod, pattern: &str, route_func: RouteFunc) -> Self {
+        println!("Adding pattern \"{}\"", pattern);
+
+        if self.routing_patterns.contains_key(pattern) {
+            println!(
+                "Pattern \"{}\" already exists, routing information will be overwritten",
+                pattern
+            );
+        }
+
+        self.routing_patterns.insert(
+            pattern.to_owned(),
+            RouteInfo {
+                method: method,
+                callback: route_func,
+            },
+        );
+
         self
     }
 
