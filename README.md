@@ -2,7 +2,6 @@
 
 # Webby
 Webby is a simple Rust web server that supports HTTP 1.1.
-The main goal of this project is to provide a very simple web server.
 
 ## Motivation
 The Rust ecosystem comes with a lot of third-party web server crates.
