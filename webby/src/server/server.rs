@@ -6,14 +6,14 @@ pub type RouteFunc = fn() -> HttpResponse;
 
 pub struct Server {
     address: String,
-    routingPatterns: HashMap<String, RouteFunc>
+    routing_patterns: HashMap<String, RouteFunc>
 }
 
 impl Server {
     pub fn new(address: &str) -> Self {
         Self {
             address: address.to_owned(),
-            routingPatterns: HashMap::new()
+            routing_patterns: HashMap::new()
         }
     }
 
