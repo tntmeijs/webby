@@ -1,4 +1,4 @@
-![version 0.0.3](https://img.shields.io/badge/version-0.0.3-red)
+![version 0.0.4](https://img.shields.io/badge/version-0.0.4-red)
 
 # Webby
 Webby is a simple Rust web server that supports HTTP 1.1.
@@ -6,10 +6,11 @@ The main goal of this project is to provide a very simple web server.
 
 ## Motivation
 The Rust ecosystem comes with a lot of third-party web server crates.
-A lot of crates are absolutely brilliant, but none of them really clicked with me.
+A lot of crates are absolutely brilliant, but none of them really teach you how a web server works.
+This crate allows me to discover what makes a server tick, how to handle requests, asynchronous programming, and much, much more!
 
-This is the reason I started Webby. I want to write an easy-to-use yet complete web server that allows users to easily create new servers with Rust.
-One of the main issues I have with existing frameworks is that it's either too low-level, or not as user-friendly as I'd like.
+Right now, I wouldn't recommend using this crate in any serious projects. It's simply too unreliable and insecure.
+But hey, maybe this crate will once day be listed on [AWWY](https://arewewebyet.org) if I manage to turn it into something usable... ;)
 
 ## Pull request guide
 1. Create a branch from `master` using the following format: `feature/<your-feature-name-here>`.
