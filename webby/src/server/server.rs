@@ -7,7 +7,6 @@ use std::{
 use crate::{
     request::http_method::HttpMethod,
     response::http_response::HttpResponse,
-    utility::{http_headers, mime_types},
 };
 
 pub type RouteFunc = fn() -> HttpResponse;
@@ -73,26 +72,17 @@ impl Server {
             return println!("Unable to read buffer from incoming TCP stream");
         }
 
-        self.parse_request(&buffer);
+        let route_to_execute = self.parse_request(&buffer);
 
-        println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
-
-        // For the time being, always return HTTP status 200
-        let response = HttpResponse::new()
-            .ok()
-            .add_header(http_headers::CONTENT_TYPE, mime_types::TXT)
-            .body("Hello, client! <3");
-
-        if stream.write(response.to_string().as_bytes()).is_err() {
-            return println!("Unable to write response to TCP stream");
-        }
-
-        if stream.flush().is_err() {
-            return println!("Unable to flush TCP stream");
+        if route_to_execute.is_none() {
+            self.write_response(stream, HttpResponse::new().not_found().to_string().as_bytes());
+        } else {
+            let response = route_to_execute.unwrap();
+            self.write_response(stream, response.to_string().as_bytes());
         }
     }
 
-    fn parse_request(&self, buffer: &[u8]) {
+    fn parse_request(&self, buffer: &[u8]) -> Option<HttpResponse> {
         let request_str = String::from_utf8_lossy(buffer).to_string();
 
         let mut parts = request_str.split_whitespace();
@@ -102,9 +92,32 @@ impl Server {
 
         if method.is_none() || route.is_none() || http_spec.is_none() {
             println!("ERROR: Malformed HTTP request");
-            return;
+            return None;
         }
 
-        println!("HTTP method: \"{}\", route: \"{}\", spec: \"{}\"", method.unwrap(), route.unwrap(), http_spec.unwrap());
+        // Naive route matching algorithm
+        for (pattern, route_info) in &self.routing_patterns {
+            if route.unwrap() == pattern {
+                if HttpMethod::from(method.unwrap()) == route_info.method {
+                    println!("DEBUG: Route \"{}\" matches pattern \"{}\"", route.unwrap(), pattern);
+                    return Some((route_info.callback)());
+                } else {
+                    println!("DEBUG: Route \"{}\" matches pattern \"{}\", but the method \"{}\" is not allowed", route.unwrap(), pattern, method.unwrap());
+                    return Some(HttpResponse::new().method_not_allowed());
+                }
+            }
+        }
+
+        None
+    }
+
+    fn write_response(&self, stream: &mut TcpStream, data: &[u8]) {
+        if stream.write(data).is_err() {
+            return println!("Unable to write response to TCP stream");
+        }
+
+        if stream.flush().is_err() {
+            return println!("Unable to flush TCP stream");
+        }
     }
 }
