@@ -1,18 +1,19 @@
-use std::{
-    io::{Read, Write},
-    net::{TcpListener, TcpStream},
-};
+use std::{collections::HashMap, io::{Read, Write}, net::{TcpListener, TcpStream}};
 
 use crate::{request::http_method, response::http_response::HttpResponse, utility::{http_headers, mime_types}};
 
+pub type RouteFunc = fn() -> HttpResponse;
+
 pub struct Server {
     address: String,
+    routingPatterns: HashMap<String, RouteFunc>
 }
 
 impl Server {
     pub fn new(address: &str) -> Self {
         Self {
             address: address.to_owned(),
+            routingPatterns: HashMap::new()
         }
     }
 
@@ -32,7 +33,7 @@ impl Server {
         self
     }
 
-    pub fn add_route(mut self, method: http_method::HttpMethod, pattern: &str, controller: impl Fn()) -> Self {
+    pub fn add_route(mut self, method: http_method::HttpMethod, pattern: &str, routeFunc: RouteFunc) -> Self {
         // @TODO: Add routing logic
         self
     }
