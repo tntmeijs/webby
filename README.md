@@ -1,6 +1,7 @@
-![version 0.0.5](https://img.shields.io/badge/version-0.0.5-red)
-
 # Webby
+
+![Crates.io version badge](https://img.shields.io/crates/v/webby?style=for-the-badge)
+
 Webby is a simple Rust web server that supports HTTP 1.1.
 
 ## Motivation
