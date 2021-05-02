@@ -6,6 +6,7 @@ repository = "https://github.com/tntmeijs/webby"
 authors = ["Tahar <tntmeijs@gmail.com>"]
 keywords = ["web server", "server", "website", "webdev", "educational"]
 edition = "2018"
+readme = "./../README.md"
 license-file = "./../LICENSE.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
