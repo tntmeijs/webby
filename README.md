@@ -12,6 +12,34 @@ This crate allows me to discover what makes a server tick, how to handle request
 Right now, I wouldn't recommend using this crate in any serious projects. It's simply too unreliable and insecure.
 But hey, maybe this crate will once day be listed on [AWWY](https://arewewebyet.org) if I manage to turn it into something usable... ;)
 
+## Features
+### Create a simple HTTP server
+```rust
+// Run a server on localhost:8080
+fn main() {
+    webby::create("127.0.0.1", 8080)
+        .start_listening();
+}
+```
+
+### Routing
+No web server would be complete without any sort of routing, which is why Webby supports routing too.
+
+You can either use functions, or lambda functions. As long as you match the expected function signature, it'll work!
+
+```rust
+fn index() -> HttpResponse {
+    println!("This is an index route, it only ever returns HTTP 204.");
+    HttpResponse::new().no_content()
+}
+
+fn main() {
+    webby::create("127.0.0.1", 8080)
+        .add_route(HttpMethod::GET, "/", index)
+        .start_listening();
+}
+```
+
 ## Pull request guide
 1. Create a branch from `master` using the following format: `feature/<your-feature-name-here>`.
 2. Make your changes.
