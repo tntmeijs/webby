@@ -4,10 +4,9 @@ use std::{
     net::{TcpListener, TcpStream},
 };
 
-use crate::{
-    request::http_method::HttpMethod,
-    response::http_response::HttpResponse,
-};
+use log::{debug, error, info};
+
+use crate::{request::http_method::HttpMethod, response::http_response::HttpResponse};
 
 pub type RouteFunc = fn() -> HttpResponse;
 
@@ -35,21 +34,22 @@ impl Server {
                 for stream in listener.incoming() {
                     match stream {
                         Ok(mut stream) => self.handle_connection(&mut stream),
-                        Err(error) => println!("ERROR: {}", error.to_string()),
+                        Err(error) => error!("{}", error.to_string()),
                     }
                 }
             }
-            Err(error) => println!("ERROR: {}", error.to_string()),
+            Err(error) => error!("{}", error.to_string()),
         }
 
+        info!("Server running on \"{}\"", self.address);
         self
     }
 
     pub fn add_route(mut self, method: HttpMethod, pattern: &str, route_func: RouteFunc) -> Self {
-        println!("Adding pattern \"{}\"", pattern);
+        debug!("Adding pattern \"{}\"", pattern);
 
         if self.routing_patterns.contains_key(pattern) {
-            println!(
+            debug!(
                 "Pattern \"{}\" already exists, routing information will be overwritten",
                 pattern
             );
@@ -69,13 +69,16 @@ impl Server {
     fn handle_connection(&self, stream: &mut TcpStream) {
         let mut buffer = [0; 1024];
         if stream.read(&mut buffer).is_err() {
-            return println!("Unable to read buffer from incoming TCP stream");
+            return error!("Unable to read buffer from incoming TCP stream");
         }
 
         let route_to_execute = self.parse_request(&buffer);
 
         if route_to_execute.is_none() {
-            self.write_response(stream, HttpResponse::new().not_found().to_string().as_bytes());
+            self.write_response(
+                stream,
+                HttpResponse::new().not_found().to_string().as_bytes(),
+            );
         } else {
             let response = route_to_execute.unwrap();
             self.write_response(stream, response.to_string().as_bytes());
@@ -91,7 +94,7 @@ impl Server {
         let http_spec = parts.next();
 
         if method.is_none() || route.is_none() || http_spec.is_none() {
-            println!("ERROR: Malformed HTTP request");
+            error!("Malformed HTTP request");
             return None;
         }
 
@@ -99,10 +102,19 @@ impl Server {
         for (pattern, route_info) in &self.routing_patterns {
             if route.unwrap() == pattern {
                 if HttpMethod::from(method.unwrap()) == route_info.method {
-                    println!("DEBUG: Route \"{}\" matches pattern \"{}\"", route.unwrap(), pattern);
+                    debug!(
+                        "Route \"{}\" matches pattern \"{}\"",
+                        route.unwrap(),
+                        pattern
+                    );
                     return Some((route_info.callback)());
                 } else {
-                    println!("DEBUG: Route \"{}\" matches pattern \"{}\", but the method \"{}\" is not allowed", route.unwrap(), pattern, method.unwrap());
+                    debug!(
+                        "Route \"{}\" matches pattern \"{}\", but the method \"{}\" is not allowed",
+                        route.unwrap(),
+                        pattern,
+                        method.unwrap()
+                    );
                     return Some(HttpResponse::new().method_not_allowed());
                 }
             }
@@ -113,11 +125,11 @@ impl Server {
 
     fn write_response(&self, stream: &mut TcpStream, data: &[u8]) {
         if stream.write(data).is_err() {
-            return println!("Unable to write response to TCP stream");
+            return error!("Unable to write response to TCP stream");
         }
 
         if stream.flush().is_err() {
-            return println!("Unable to flush TCP stream");
+            return error!("Unable to flush TCP stream");
         }
     }
 }
