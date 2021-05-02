@@ -73,6 +73,8 @@ impl Server {
             return println!("Unable to read buffer from incoming TCP stream");
         }
 
+        self.parse_request(&buffer);
+
         println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
 
         // For the time being, always return HTTP status 200
@@ -88,5 +90,21 @@ impl Server {
         if stream.flush().is_err() {
             return println!("Unable to flush TCP stream");
         }
+    }
+
+    fn parse_request(&self, buffer: &[u8]) {
+        let request_str = String::from_utf8_lossy(buffer).to_string();
+
+        let mut parts = request_str.split_whitespace();
+        let method = parts.next();
+        let route = parts.next();
+        let http_spec = parts.next();
+
+        if method.is_none() || route.is_none() || http_spec.is_none() {
+            println!("ERROR: Malformed HTTP request");
+            return;
+        }
+
+        println!("HTTP method: \"{}\", route: \"{}\", spec: \"{}\"", method.unwrap(), route.unwrap(), http_spec.unwrap());
     }
 }
