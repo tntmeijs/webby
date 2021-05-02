@@ -425,9 +425,17 @@ impl std::fmt::Display for HttpResponse {
             }
         }
 
-        fmt.write_str(&format!(
-            "HTTP/1.1 {} {}\r\n{}\r\n\r\n{}",
-            self.status_code, self.status_message, headers, self.body
-        ))
+        let mut http_response = String::new();
+        http_response.push_str(&format!("HTTP/1.1 {} {}\r\n", self.status_code, self.status_message));
+        
+        if !headers.is_empty() {
+            http_response.push_str(&format!("{}\r\n", headers));
+        }
+
+        if !self.body.is_empty() {
+            http_response.push_str(&format!("\r\n{}", self.body));
+        }
+
+        fmt.write_str(&http_response)
     }
 }
