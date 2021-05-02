@@ -49,6 +49,11 @@ fn main() {
 8. Add a proper changelog / pull request description.
 
 ## Third-party dependencies
-I've tried to keep Webby as simple as possible. However, some tasks are just out of scope for this project. The list below shows all dependencies used in Webby.
+I've tried to keep Webby as simple as possible. However, some tasks are just out of scope for this project.
 
+### Demo
+- [Env Logger](https://crates.io/crates/env_logger) - a logger that can be configured via environment variables
+- [DotEnv](https://crates.io/crates/dotenv) - load environment variables from a `.env` file
+
+### Webby
 - [Log](https://crates.io/crates/log) - lightweight logging facade
