@@ -6,6 +6,7 @@ fn test() -> HttpResponse {
 }
 
 fn main() {
+    dotenv::from_filename(format!("{}/.env", module_path!())).ok();
     webby::create("127.0.0.1", 8080)
         .add_route(HttpMethod::GET, "/", || {
             println!("GET called for route \"/\", lambda works!");
