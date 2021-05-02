@@ -32,6 +32,8 @@ impl Server {
         trace!("About to start listening on {}", self.address);
         match TcpListener::bind(&self.address) {
             Ok(listener) => {
+                info!("Server running on \"{}\"", self.address);
+
                 for stream in listener.incoming() {
                     match stream {
                         Ok(mut stream) => self.handle_connection(&mut stream),
@@ -42,7 +44,6 @@ impl Server {
             Err(error) => error!("{}", error.to_string()),
         }
 
-        info!("Server running on \"{}\"", self.address);
         self
     }
 
