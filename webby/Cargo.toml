@@ -1,7 +1,7 @@
 [package]
 name = "webby"
 description = "A very simple HTTP 1.1 web server"
-version = "0.0.6"
+version = "0.0.7"
 repository = "https://github.com/tntmeijs/webby"
 authors = ["Tahar <tntmeijs@gmail.com>"]
 keywords = ["web-server", "server", "website", "webdev", "educational"]
