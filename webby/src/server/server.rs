@@ -6,9 +6,9 @@ use std::{
 
 use log::{debug, error, info, trace};
 
-use crate::{request::http_method::HttpMethod, response::http_response::HttpResponse};
+use crate::{request::{http_method::HttpMethod, request_data::RequestData}, response::http_response::HttpResponse};
 
-pub type RouteFunc = fn() -> HttpResponse;
+pub type RouteFunc = fn(data: &RequestData) -> HttpResponse;
 
 struct RouteInfo {
     method: HttpMethod,
@@ -111,7 +111,10 @@ impl Server {
                         route.unwrap(),
                         pattern
                     );
-                    return Some((route_info.callback)());
+
+                    let request_data = RequestData {};
+
+                    return Some((route_info.callback)(&request_data));
                 } else {
                     debug!(
                         "Route \"{}\" matches pattern \"{}\", but the method \"{}\" is not allowed",
